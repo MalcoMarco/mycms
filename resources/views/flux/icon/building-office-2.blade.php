@@ -1,0 +1,3 @@
+<svg {{ $attributes }} fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m2.25-12.75h4.5v2.25h-4.5V10.5ZM4.5 3.75c0-1.24 1.007-2.25 2.25-2.25h9c1.243 0 2.25 1.01 2.25 2.25v18h2.25l-1.5-3h3v-4.5l-1.5-3h3v-4.5l-1.5-3h3v-4.5l-1.5-3h3v-4.5l-1.5-3h3V7.5h-3V3.75ZM6.75 6h2.25v2.25H6.75V6ZM6.75 10.5h2.25v2.25H6.75v-2.25ZM6.75 15h2.25v2.25H6.75V15ZM11.25 6h2.25v2.25h-2.25V6ZM11.25 10.5h2.25v2.25h-2.25v-2.25ZM11.25 15h2.25v2.25h-2.25V15Z" />
+</svg>

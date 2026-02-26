@@ -13,6 +13,8 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    protected $table = 'users';
+    protected $connection = 'pgsql'; // Conexión a la base de datos central
 
     /**
      * The attributes that are mass assignable.
@@ -60,5 +62,27 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Get the tenants that the user belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Tenant>
+     */
+    public function tenants(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class, 'tenants_users')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the tenants that the user owns.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Tenant>
+     */
+    public function ownedTenants(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->tenants()->wherePivot('role', 'owner');
     }
 }
