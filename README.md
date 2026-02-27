@@ -113,6 +113,9 @@ composer run lint
 
 # Ver logs en tiempo real
 php artisan pail
+
+# Ejecutar las migraciones y los seeders
+php artisan migrate:refresh --seed
 ```
 
 ## Arquitectura Multi-Tenant

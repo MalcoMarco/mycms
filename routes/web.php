@@ -10,6 +10,8 @@ Route::get('/', function () {
 Route::view('dashboard', 'pages.dashboard.index')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+    
 Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () {
 
     Route::livewire('tenants', 'tenants')->name('tenants.index');

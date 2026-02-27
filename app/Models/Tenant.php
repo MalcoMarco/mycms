@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Stancl\Tenancy\Contracts\TenantWithDatabase;
-use Stancl\Tenancy\Database\Concerns\HasDatabase;
+// use Stancl\Tenancy\Contracts\TenantWithDatabase;
+// use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
-class Tenant extends BaseTenant implements TenantWithDatabase
+class Tenant extends BaseTenant
 {
-    use HasDatabase, HasDomains;
+    use HasDomains;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +20,20 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'id',
         'data',
     ];
+
+    /**
+     * Sobreescribe para que use la misma conexión central.
+     */
+    public function database(): \Stancl\Tenancy\Database\TenantDatabaseManager
+    {
+        // No necesitamos gestión de base de datos separada
+        return new class {
+            public function getName(): string
+            {
+                return config('database.default');
+            }
+        };
+    }
 
     /**
      * The attributes that should be cast.

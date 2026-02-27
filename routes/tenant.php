@@ -34,10 +34,9 @@ Route::middleware([
      */
     Route::middleware([ 'auth', 'tenant.access', ])->group(function () {
     
-        Route::get('/dashboard', function () {
-            return 'This is the dashboard for tenant '.tenant('id');
-        });
-    
+        Route::view('dashboard', 'pages.tenants.index');
+        Route::livewire('web-settings', 'pages::tenants.web-settings-edit')->name('tenants.web-settings.edit');
+
     });
 
 });

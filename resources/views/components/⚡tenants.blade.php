@@ -104,7 +104,7 @@ new class extends Component
     <div class="space-y-6">
         <!-- Header -->
         <div class="flex justify-between items-center">
-            <flux:heading size="lg">Mis Tenants2</flux:heading>
+            <flux:heading size="lg">Mis Tenants</flux:heading>
             <flux:button 
                 wire:click="toggleCreateForm" 
                 variant="primary" 
@@ -202,7 +202,10 @@ new class extends Component
                             <div class="flex items-start justify-between">
                                 <div class="flex-1 min-w-0">
                                     <flux:heading size="md" class="truncate">
-                                        {{ $tenant->domains->first()->domain ?? $tenant->id . '.' . $baseDomain }}
+                                        <a href="http://{{ $tenant->domains->first()->domain ?? $tenant->id . '.' . $baseDomain }}:8000/dashboard" target="_blank" rel="noopener noreferrer">
+                                            {{ $tenant->domains->first()->domain ?? $tenant->id . '.' . $baseDomain }}
+                                        
+                                        </a>
                                     </flux:heading>
                                     <p class="text-sm text-neutral-500 dark:text-neutral-400 font-mono">
                                         {{ $tenant->id }}
