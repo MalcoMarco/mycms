@@ -43,4 +43,14 @@ class WebSetting extends Model
         'custom_head_scripts',
         'custom_body_scripts',
     ];
+
+    /**
+     * Get the tenant that owns this web setting.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Tenant>
+     */
+    public function tenant(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
 }

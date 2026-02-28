@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('web_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id');
-            $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
+            $table->string('tenant_id')->unique();
+            $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete()->cascadeOnUpdate();
             $table->index('tenant_id');
 
             // SEO

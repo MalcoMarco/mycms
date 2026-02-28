@@ -116,6 +116,10 @@ php artisan pail
 
 # Ejecutar las migraciones y los seeders
 php artisan migrate:refresh --seed
+
+# crear nuevo componente Livewire
+php artisan make:livewire post.create
+php artisan make:livewire pages::post.create 
 ```
 
 ## Arquitectura Multi-Tenant

@@ -27,7 +27,8 @@ class Tenant extends BaseTenant
     public function database(): \Stancl\Tenancy\Database\TenantDatabaseManager
     {
         // No necesitamos gestión de base de datos separada
-        return new class {
+        return new class
+        {
             public function getName(): string
             {
                 return config('database.default');
@@ -66,4 +67,13 @@ class Tenant extends BaseTenant
         return $this->users()->wherePivot('role', 'owner');
     }
 
+    /**
+     * Get webSettings.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<WebSetting>
+     */
+    public function webSettings(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(WebSetting::class);
+    }
 }

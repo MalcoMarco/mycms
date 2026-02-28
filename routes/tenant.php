@@ -27,15 +27,21 @@ Route::middleware([
         return 'This is your multi-tenant application. The id of the current tenant is '.tenant('id');
     });
 
-
     /**
      * Rutas protegidas por el middleware EnsureUserBelongsToTenant,
      * que verifica que el usuario autenticado pertenece al tenant actual.
      */
-    Route::middleware([ 'auth', 'tenant.access', ])->group(function () {
-    
-        Route::view('dashboard', 'pages.tenants.index');
+    Route::middleware(['auth', 'tenant.access'])->prefix('dashboard')->group(function () {
+
+        Route::view('', 'pages.tenants.index');
         Route::livewire('web-settings', 'pages::tenants.web-settings-edit')->name('tenants.web-settings.edit');
+        Route::livewire('pages', 'pages::tenants.posts-pages')->name('tenants.posts.index');
+        Route::livewire('components', 'pages::tenants.posts-component')->name('tenants.posts-component.index');
+        Route::get('pages/{post}/page-builder', function ($post) {
+            $post = App\Models\Post::where('slug', $post)->firstOrFail();
+            return view('pages.tenants.page-builder', compact('post'));
+        }
+        )->name('tenants.posts.page-builder');
 
     });
 

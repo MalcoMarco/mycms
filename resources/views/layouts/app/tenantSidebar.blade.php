@@ -19,6 +19,15 @@
                     <flux:sidebar.item icon="cog" :href="route('tenants.web-settings.edit')" :current="request()->routeIs('tenants.web-settings.edit')" wire:navigate>
                         {{ __('Web Settings') }}
                     </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="document-text" :href="route('tenants.posts.index')" :current="request()->routeIs('tenants.posts.*')" wire:navigate>
+                        {{ __('Pages') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="puzzle-piece" :href="route('tenants.posts-component.index')" :current="request()->routeIs('tenants.posts-component.*')" wire:navigate>
+                        {{ __('Components') }}
+                    </flux:sidebar.item>
+
                 </flux:sidebar.group>
             </flux:sidebar.nav>
             
