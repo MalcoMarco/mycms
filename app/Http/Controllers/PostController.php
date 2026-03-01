@@ -8,19 +8,21 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Show the page builder for a specific post.
      */
-    public function index()
+    public function pagebuilder($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return view('pages.tenants.page-builder', compact('post'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the preview for a specific post.
      */
-    public function create()
+    public function preview($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return view('pages.tenants.page-preview', compact('post'));
     }
 
     /**
@@ -28,7 +30,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -50,9 +52,14 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $slug)
     {
-        //
+        $post = Post::where('slug', $slug)->firstOrFail();
+        $post->content_body = $request->input('content_body');
+        $post->content_css = $request->input('content_css');
+        $post->cdns = $request->input('cdns');
+        $post->save();
+        return response()->json(['message' => 'Content updated successfully']);
     }
 
     /**

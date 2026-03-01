@@ -439,7 +439,7 @@ new class extends Component
                                         <div class="mt-1 flex items-center space-x-3 text-xs text-gray-500 dark:text-gray-400">
                                             <a href="{{ route('tenants.posts.page-builder', $post->slug) }}" target="_blank" class="hover:text-blue-600 dark:hover:text-blue-400">Editar web</a>
                                             <span>|</span>
-                                            <a href="/preview/{{ $post->slug }}" target="_blank" class="hover:text-green-600 dark:hover:text-green-400">Vista rápida</a>
+                                            <a href="{{ route('tenants.posts.preview', $post->slug) }}" target="_blank" class="hover:text-green-600 dark:hover:text-green-400">Vista rápida</a>
                                             @if ($post->getRawOriginal('status') !== 'archived')
                                                 <span>|</span>
                                                 <button wire:click="updateStatus({{ $post->id }}, 'archived')" class="hover:text-red-600 dark:hover:text-red-400">Archivar</button>

@@ -23,14 +23,19 @@
             width: 100%;
         }
     </style>
+    <script>
+        window.post = { id: {{ $post->id }}, title: "{{ $post->title }}", slug: "{{ $post->slug }}", status: "{{ $post->status }}", type_id: "{{ $post->type_id }}", cdns: {!! json_encode($post->cdns) !!} };
+        window.subdomain = "{{ tenant('id') }}";
+    </script>
 </head>
 
 <body>
     <!-- Element where the editor will be rendered -->
     <div id="gjs">
-        <h1>Edita el contenido de aqui </h1>
+        {!! $post->content_body !!}
     </div>
 
+    
     @vite(['resources/js/grapeJsModule.js'])
 </body>
 

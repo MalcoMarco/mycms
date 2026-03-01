@@ -27,6 +27,7 @@ class Post extends Model
         'content_body',
         'content_css',
         'content_js',
+        'cdns',
         'excerpt',
         'status',
     ];
@@ -41,6 +42,7 @@ class Post extends Model
         return [
             'type_id' => PostType::class,
             'status' => PostStatus::class,
+            'cdns' => 'array',
         ];
     }
 

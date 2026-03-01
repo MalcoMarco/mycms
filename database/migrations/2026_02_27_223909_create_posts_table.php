@@ -27,6 +27,7 @@ return new class extends Migration
             $table->text('content_body')->nullable();
             $table->text('content_css')->nullable();
             $table->text('content_js')->nullable();
+            $table->json('cdns')->nullable();// Array de URLs de CDNs para este post example: {"styles": ["https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"], "scripts": ["https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"] }
 
             $table->string('excerpt')->nullable();
             $table->string('status')->default(PostStatus::Draft->value);
