@@ -40,6 +40,7 @@ class WebSetting extends Model
         'logo',
         'logo_dark',
         'google_analytics_id',
+        'global_cdn_urls',
         'custom_head_scripts',
         'custom_body_scripts',
     ];
@@ -52,5 +53,21 @@ class WebSetting extends Model
     public function tenant(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    /**
+     * Get the global CDN URLs as an array.
+     */
+    public function getGlobalCdnUrlsAttribute($value): array
+    {
+        return json_decode($value, true) ?? [];
+    }
+
+    /**
+     * Set the global CDN URLs from an array.
+     */
+    public function setGlobalCdnUrlsAttribute(array $value): void
+    {
+        $this->attributes['global_cdn_urls'] = json_encode($value);
     }
 }

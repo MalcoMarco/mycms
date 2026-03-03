@@ -156,6 +156,17 @@ function addButtonSave() {
             let html = editor.getHtml();
             const css = editor.getCss();
             let cdns = getSavedCdns();
+
+            // Excluir CDNs globales para no duplicarlos en el post
+            const globalCdns = {
+                scripts: Array.isArray(window.webSettings?.global_cdn_scripts) ? window.webSettings.global_cdn_scripts : [],
+                styles: Array.isArray(window.webSettings?.global_cdn_styles) ? window.webSettings.global_cdn_styles : [],
+            };
+            cdns = {
+                scripts: cdns.scripts.filter((url) => !globalCdns.scripts.includes(url)),
+                styles: cdns.styles.filter((url) => !globalCdns.styles.includes(url)),
+            };
+
             console.log("HTML:", html);
             console.log("CSS:", css);
             console.log("CDNs:", cdns);
@@ -312,16 +323,22 @@ function saveCdns(cdns) {
 }
 
 function loadSavedCdns(editor, iframeDoc) {
-    // Unificar CDNs del post (BD) y localStorage sin duplicados
+    // Unificar CDNs globales (webSettings), del post (BD) y localStorage sin duplicados
+    const globalCdns = {
+        scripts: Array.isArray(window.webSettings?.global_cdn_scripts) ? window.webSettings.global_cdn_scripts : [],
+        styles: Array.isArray(window.webSettings?.global_cdn_styles) ? window.webSettings.global_cdn_styles : [],
+    };
     const postCdns = window.post?.cdns || { scripts: [], styles: [] };
     const localCdns = getSavedCdns();
 
     const merged = {
         scripts: [...new Set([
+            ...globalCdns.scripts,
             ...(Array.isArray(postCdns.scripts) ? postCdns.scripts : []),
             ...localCdns.scripts,
         ])],
         styles: [...new Set([
+            ...globalCdns.styles,
             ...(Array.isArray(postCdns.styles) ? postCdns.styles : []),
             ...localCdns.styles,
         ])],

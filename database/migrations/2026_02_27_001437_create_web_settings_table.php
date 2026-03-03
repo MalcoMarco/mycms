@@ -46,6 +46,7 @@ return new class extends Migration
 
             // Analytics & scripts
             $table->string('google_analytics_id')->nullable();
+            $table->json('global_cdn_urls')->nullable(); // Store as JSON array of CDN URLs example:{scripts:[], styles:[]}
             $table->text('custom_head_scripts')->nullable();
             $table->text('custom_body_scripts')->nullable();
 

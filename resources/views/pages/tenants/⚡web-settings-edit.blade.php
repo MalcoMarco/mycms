@@ -39,6 +39,13 @@ new class extends Component
     public string $logo = '';
     public string $logo_dark = '';
 
+    // Global CDN URLs
+    /** @var list<string> */
+    public array $global_cdn_scripts = [];
+
+    /** @var list<string> */
+    public array $global_cdn_styles = [];
+
     // Analytics & scripts
     public string $google_analytics_id = '';
     public string $custom_head_scripts = '';
@@ -72,10 +79,35 @@ new class extends Component
             $this->accent_color = $setting->accent_color ?? '';
             $this->logo = $setting->logo ?? '';
             $this->logo_dark = $setting->logo_dark ?? '';
+            $cdnUrls = $setting->global_cdn_urls ?? [];
+            $this->global_cdn_scripts = $cdnUrls['scripts'] ?? [];
+            $this->global_cdn_styles = $cdnUrls['styles'] ?? [];
             $this->google_analytics_id = $setting->google_analytics_id ?? '';
             $this->custom_head_scripts = $setting->custom_head_scripts ?? '';
             $this->custom_body_scripts = $setting->custom_body_scripts ?? '';
         }
+    }
+
+    public function addCdnScript(): void
+    {
+        $this->global_cdn_scripts[] = '';
+    }
+
+    public function removeCdnScript(int $index): void
+    {
+        unset($this->global_cdn_scripts[$index]);
+        $this->global_cdn_scripts = array_values($this->global_cdn_scripts);
+    }
+
+    public function addCdnStyle(): void
+    {
+        $this->global_cdn_styles[] = '';
+    }
+
+    public function removeCdnStyle(int $index): void
+    {
+        unset($this->global_cdn_styles[$index]);
+        $this->global_cdn_styles = array_values($this->global_cdn_styles);
     }
 
     public function save(): void
@@ -102,10 +134,20 @@ new class extends Component
             'accent_color' => ['nullable', 'string', 'max:20'],
             'logo' => ['nullable', 'string', 'url', 'max:2048'],
             'logo_dark' => ['nullable', 'string', 'url', 'max:2048'],
+            'global_cdn_scripts' => ['nullable', 'array'],
+            'global_cdn_scripts.*' => ['required', 'string', 'url', 'max:2048', 'distinct', 'regex:/\.(js|mjs)(\?.*)?$/i'],
+            'global_cdn_styles' => ['nullable', 'array'],
+            'global_cdn_styles.*' => ['required', 'string', 'url', 'max:2048', 'distinct', 'regex:/\.css(\?.*)?$/i'],
             'google_analytics_id' => ['nullable', 'string', 'max:50'],
             'custom_head_scripts' => ['nullable', 'string', 'max:5000'],
             'custom_body_scripts' => ['nullable', 'string', 'max:5000'],
         ]);
+
+        $validated['global_cdn_urls'] = [
+            'scripts' => array_values(array_filter($validated['global_cdn_scripts'] ?? [])),
+            'styles' => array_values(array_filter($validated['global_cdn_styles'] ?? [])),
+        ];
+        unset($validated['global_cdn_scripts'], $validated['global_cdn_styles']);
 
         WebSetting::updateOrCreate(
             ['tenant_id' => $this->tenant],
@@ -202,13 +244,61 @@ new class extends Component
             </div>
         </div>
 
+        {{-- Global CDN URLs --}}
+        <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700">
+            <flux:heading size="md" class="mb-4">{{ __('CDN Globales') }}</flux:heading>
+            <flux:subheading class="mb-4">{{ __('URLs de CDN que se cargarán en todas las páginas del sitio.') }}</flux:subheading>
+
+            {{-- CDN Scripts --}}
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <flux:label>{{ __('Scripts (JS)') }}</flux:label>
+                    <flux:button size="sm" variant="ghost" icon="plus" wire:click="addCdnScript" type="button">
+                        {{ __('Agregar') }}
+                    </flux:button>
+                </div>
+                @foreach ($global_cdn_scripts as $index => $script)
+                    <div class="flex items-center gap-2" wire:key="cdn-script-{{ $index }}">
+                        <flux:input wire:model="global_cdn_scripts.{{ $index }}" type="url" placeholder="https://cdn.ejemplo.com/libreria.js" class="flex-1" />
+                        <flux:button size="sm" variant="ghost" icon="trash" wire:click="removeCdnScript({{ $index }})" type="button" />
+                    </div>
+                    <flux:error name="global_cdn_scripts.{{ $index }}" />
+                @endforeach
+                @if (empty($global_cdn_scripts))
+                    <flux:text class="text-sm italic">{{ __('No hay scripts CDN configurados.') }}</flux:text>
+                @endif
+            </div>
+
+            <flux:separator class="my-4" />
+
+            {{-- CDN Styles --}}
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <flux:label>{{ __('Estilos (CSS)') }}</flux:label>
+                    <flux:button size="sm" variant="ghost" icon="plus" wire:click="addCdnStyle" type="button">
+                        {{ __('Agregar') }}
+                    </flux:button>
+                </div>
+                @foreach ($global_cdn_styles as $index => $style)
+                    <div class="flex items-center gap-2" wire:key="cdn-style-{{ $index }}">
+                        <flux:input wire:model="global_cdn_styles.{{ $index }}" type="url" placeholder="https://cdn.ejemplo.com/estilos.css" class="flex-1" />
+                        <flux:button size="sm" variant="ghost" icon="trash" wire:click="removeCdnStyle({{ $index }})" type="button" />
+                    </div>
+                    <flux:error name="global_cdn_styles.{{ $index }}" />
+                @endforeach
+                @if (empty($global_cdn_styles))
+                    <flux:text class="text-sm italic">{{ __('No hay estilos CDN configurados.') }}</flux:text>
+                @endif
+            </div>
+        </div>
+
         {{-- Analytics & scripts --}}
         <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700">
             <flux:heading size="md" class="mb-4">{{ __('Analytics y Scripts') }}</flux:heading>
             <div class="space-y-4">
                 <flux:input wire:model="google_analytics_id" :label="__('Google Analytics ID')" placeholder="G-XXXXXXXXXX" />
-                <flux:textarea wire:model="custom_head_scripts" :label="__('Scripts en Head')" rows="3" placeholder="<!-- Scripts personalizados para el <head> -->" />
-                <flux:textarea wire:model="custom_body_scripts" :label="__('Scripts en Body')" rows="3" placeholder="<!-- Scripts personalizados para el <body> -->" />
+                <flux:textarea wire:model="custom_head_scripts" :label="__('Scripts en Head')" rows="3" placeholder="<!-- Scripts personalizados para el <head> -->"/>
+                <flux:textarea wire:model="custom_body_scripts" :label="__('Scripts en Body')" rows="3" placeholder="<!-- Scripts personalizados para el <body> -->"/>
             </div>
         </div>
 
@@ -224,3 +314,4 @@ new class extends Component
         </div>
     </form>
 </section>
+{{-- todo: este componente pasarlo a un page normal para poder usar codeMirror sin problemas del render --}}

@@ -10,6 +10,7 @@
         "@tailwindcss/vite": "^4.1.11",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.4",
+        "codemirror": "^5.65.21",
         "concurrently": "^9.0.1",
         "grapesjs": "^0.22.14",
         "grapesjs-blocks-basic": "^1.0.2",

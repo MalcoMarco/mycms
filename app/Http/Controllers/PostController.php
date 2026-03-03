@@ -13,7 +13,8 @@ class PostController extends Controller
     public function pagebuilder($slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
-        return view('pages.tenants.page-builder', compact('post'));
+        $webSetting = $post->tenant->webSettings;
+        return view('pages.tenants.page-builder', compact('post', 'webSetting'));
     }
 
     /**
@@ -22,7 +23,8 @@ class PostController extends Controller
     public function preview($slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
-        return view('pages.tenants.page-preview', compact('post'));
+        $webSetting = $post->tenant->webSettings;
+        return view('pages.tenants.page-preview', compact('post', 'webSetting'));
     }
 
     /**

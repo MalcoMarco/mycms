@@ -5,30 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $post->title }}</title>
-
+    <title>{{ $webSetting->meta_title }} - {{ $post->title }}</title>
+    {{-- Agregrar styles Globales y del post --}}
+    @foreach ($webSetting->global_cdn_urls['styles'] as $styleGlobal)
+        <link rel="stylesheet" href="{{ $styleGlobal }}">        
+    @endforeach
     @foreach ($post->cdns['styles'] ?? [] as $style)
         <link rel="stylesheet" href="{{ $style }}">
     @endforeach
+
+    {{-- Tailwind CSS browser debe ir en head para evitar FOUC --}}
+    @foreach ($webSetting->global_cdn_urls['scripts'] ?? [] as $scriptGlobal)
+        @if (str_contains($scriptGlobal, 'tailwindcss'))
+            <script src="{{ $scriptGlobal }}"></script>
+        @endif        
+    @endforeach
     @foreach ($post->cdns['scripts'] ?? [] as $script)
         @if (str_contains($script, 'tailwindcss'))
-            {{-- Tailwind CSS browser debe ir en head para evitar FOUC --}}
             <script src="{{ $script }}"></script>
         @endif
     @endforeach
+
+    {!! $webSetting->custom_head_scripts !!}
     <style>
         {!! $post->content_css !!}
     </style>
 </head>
 
 <body>
+    {{-- BODY DEL POST --}}
     {!! $post->content_body !!}
 
+    {{-- CDNs Scripts Globales --}}
+    @foreach ($webSetting->global_cdn_urls['scripts'] ?? [] as $scriptGlobal)
+        @unless (str_contains($scriptGlobal, 'tailwindcss'))
+            <script src="{{ $scriptGlobal }}" defer></script>
+        @endunless
+    @endforeach
+    {{-- CDNs Scripts del post --}}
     @foreach ($post->cdns['scripts'] ?? [] as $script)
         @unless (str_contains($script, 'tailwindcss'))
             <script src="{{ $script }}" defer></script>
         @endunless
     @endforeach
+
+    {!! $webSetting->custom_body_scripts !!}
+
     <script>
         {!! $post->content_js !!}
     </script>

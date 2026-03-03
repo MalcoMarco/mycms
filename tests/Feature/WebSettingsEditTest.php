@@ -131,4 +131,80 @@ class WebSettingsEditTest extends TestCase
             ->call('save')
             ->assertHasNoErrors();
     }
+
+    public function test_web_settings_can_save_global_cdn_urls(): void
+    {
+        [$user, $tenant] = $this->createTenantWithOwner();
+
+        Livewire::actingAs($user)
+            ->test('web-settings-edit', ['tenant' => $tenant])
+            ->set('global_cdn_scripts', ['https://cdn.example.com/app.js'])
+            ->set('global_cdn_styles', ['https://cdn.example.com/app.css'])
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertDispatched('web-settings-saved');
+
+        $setting = WebSetting::where('tenant_id', $tenant->id)->first();
+        $cdnUrls = $setting->global_cdn_urls;
+
+        $this->assertEquals(['https://cdn.example.com/app.js'], $cdnUrls['scripts']);
+        $this->assertEquals(['https://cdn.example.com/app.css'], $cdnUrls['styles']);
+    }
+
+    public function test_web_settings_loads_existing_cdn_urls(): void
+    {
+        [$user, $tenant] = $this->createTenantWithOwner();
+
+        WebSetting::factory()->create([
+            'tenant_id' => $tenant->id,
+            'global_cdn_urls' => [
+                'scripts' => ['https://cdn.example.com/lib.js'],
+                'styles' => ['https://cdn.example.com/lib.css'],
+            ],
+        ]);
+
+        Livewire::actingAs($user)
+            ->test('web-settings-edit', ['tenant' => $tenant])
+            ->assertSet('global_cdn_scripts', ['https://cdn.example.com/lib.js'])
+            ->assertSet('global_cdn_styles', ['https://cdn.example.com/lib.css']);
+    }
+
+    public function test_web_settings_validates_cdn_urls(): void
+    {
+        [$user, $tenant] = $this->createTenantWithOwner();
+
+        Livewire::actingAs($user)
+            ->test('web-settings-edit', ['tenant' => $tenant])
+            ->set('global_cdn_scripts', ['not-a-valid-url'])
+            ->call('save')
+            ->assertHasErrors(['global_cdn_scripts.0']);
+    }
+
+    public function test_web_settings_can_add_and_remove_cdn_scripts(): void
+    {
+        [$user, $tenant] = $this->createTenantWithOwner();
+
+        Livewire::actingAs($user)
+            ->test('web-settings-edit', ['tenant' => $tenant])
+            ->call('addCdnScript')
+            ->assertSet('global_cdn_scripts', [''])
+            ->call('addCdnScript')
+            ->assertCount('global_cdn_scripts', 2)
+            ->call('removeCdnScript', 0)
+            ->assertCount('global_cdn_scripts', 1);
+    }
+
+    public function test_web_settings_can_add_and_remove_cdn_styles(): void
+    {
+        [$user, $tenant] = $this->createTenantWithOwner();
+
+        Livewire::actingAs($user)
+            ->test('web-settings-edit', ['tenant' => $tenant])
+            ->call('addCdnStyle')
+            ->assertSet('global_cdn_styles', [''])
+            ->call('addCdnStyle')
+            ->assertCount('global_cdn_styles', 2)
+            ->call('removeCdnStyle', 0)
+            ->assertCount('global_cdn_styles', 1);
+    }
 }
