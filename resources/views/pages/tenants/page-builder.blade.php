@@ -33,7 +33,8 @@
             global_cdn_styles: {!! json_encode($webSetting->global_cdn_urls['styles'] ?? []) !!},
             global_cdn_scripts: {!! json_encode($webSetting->global_cdn_urls['scripts'] ?? []) !!},
             custom_head_scripts: `{!! addslashes($webSetting->custom_head_scripts ?? '') !!}`,
-            custom_body_scripts: `{!! addslashes($webSetting->custom_body_scripts ?? '') !!}`
+            custom_body_scripts: `{!! addslashes($webSetting->custom_body_scripts ?? '') !!}`,
+            canvas_styles: @json(view('pages.tenants.partials.page-webSetings-colors', ['webSetting' => $webSetting])->render()),
         };
         window.subdomain = "{{ tenant('id') }}";
     </script>

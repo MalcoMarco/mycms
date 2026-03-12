@@ -11,7 +11,7 @@ use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 
 class Post extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,7 @@ class Post extends Model
         'content_body',
         'content_css',
         'content_js',
-        'cdns',
+        'cdns', // Store as JSON array of CDN URLs example:{scripts:[], styles:[]}
         'excerpt',
         'status',
     ];

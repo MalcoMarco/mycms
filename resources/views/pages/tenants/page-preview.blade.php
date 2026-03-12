@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $webSetting->meta_title }} - {{ $post->title }}</title>
     {{-- Agregrar styles Globales y del post --}}
-    @foreach ($webSetting->global_cdn_urls['styles'] as $styleGlobal)
+    @foreach ($webSetting->global_cdn_urls['styles'] ?? [] as $styleGlobal)
         <link rel="stylesheet" href="{{ $styleGlobal }}">        
     @endforeach
     @foreach ($post->cdns['styles'] ?? [] as $style)
@@ -27,7 +27,9 @@
     @endforeach
 
     {!! $webSetting->custom_head_scripts !!}
+    
     <style>
+        @include('pages.tenants.partials.page-webSetings-colors')
         {!! $post->content_css !!}
     </style>
 </head>

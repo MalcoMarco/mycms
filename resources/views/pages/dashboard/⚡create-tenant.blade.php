@@ -91,7 +91,7 @@ new class extends Component
                 'primary_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'secondary_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'accent_color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-                'logo' => ['nullable', 'string', 'url', 'max:500'],
+                'logo' => ['nullable', 'url', 'max:500'],
             ],
             4 => [
                 'facebook_url' => ['nullable', 'url', 'max:255'],
@@ -198,7 +198,7 @@ new class extends Component
 };
 ?>
 
-<x-layouts::app :title="__('Crea tu Página Web')">
+
     <div class="max-w-4xl mx-auto py-8 px-4">
 
         {{-- Header --}}
@@ -225,6 +225,7 @@ new class extends Component
                         <div class="flex-1 h-0.5 mx-2 rounded {{ $step > $s['step'] - 1 ? 'bg-primary-500' : 'bg-zinc-200 dark:bg-zinc-700' }} transition-colors"></div>
                     @endif
                     <button
+                        type="button"
                         wire:click="goToStep({{ $s['step'] }})"
                         class="flex flex-col items-center gap-1.5 group {{ $s['step'] <= $step ? 'cursor-pointer' : 'cursor-default' }}"
                     >
@@ -234,7 +235,7 @@ new class extends Component
                             {{ $step < $s['step'] ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500' : '' }}
                         ">
                             @if ($step > $s['step'])
-                                <flux:icon.check class="size-5" />
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                             @else
                                 {{ $s['step'] }}
                             @endif
@@ -436,12 +437,12 @@ new class extends Component
                             {{-- Mini website preview --}}
                             <div class="rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
                                 {{-- Navbar preview --}}
-                                <div class="px-4 py-3 flex items-center justify-between" style="background-color: {{ $primary_color }}">
+                                <div class="px-4 py-3 flex items-center justify-between" x-bind:style="'background-color: ' + $wire.primary_color">
                                     <div class="flex items-center gap-2">
                                         @if ($logo)
                                             <img src="{{ $logo }}" alt="Logo" class="h-6 w-6 rounded object-cover" />
                                         @else
-                                            <div class="size-6 rounded font-bold text-xs flex items-center justify-center" style="background-color: {{ $secondary_color }}; color: white;">
+                                            <div class="size-6 rounded font-bold text-xs flex items-center justify-center text-white" x-bind:style="'background-color: ' + $wire.secondary_color">
                                                 {{ strtoupper(substr($site_name ?: 'S', 0, 1)) }}
                                             </div>
                                         @endif
@@ -455,13 +456,13 @@ new class extends Component
                                 </div>
                                 {{-- Content preview --}}
                                 <div class="p-4 space-y-3">
-                                    <div class="h-3 w-48 rounded" style="background-color: {{ $primary_color }}20"></div>
+                                    <div class="h-3 w-48 rounded bg-zinc-200 dark:bg-zinc-700"></div>
                                     <div class="h-2 w-full bg-zinc-100 dark:bg-zinc-800 rounded"></div>
                                     <div class="h-2 w-3/4 bg-zinc-100 dark:bg-zinc-800 rounded"></div>
                                     <div class="flex gap-2 mt-3">
-                                        <div class="px-3 py-1.5 rounded text-white text-xs font-medium" style="background-color: {{ $primary_color }}">Botón primario</div>
-                                        <div class="px-3 py-1.5 rounded text-white text-xs font-medium" style="background-color: {{ $secondary_color }}">Botón secundario</div>
-                                        <div class="px-3 py-1.5 rounded text-white text-xs font-medium" style="background-color: {{ $accent_color }}">Acento</div>
+                                        <div class="px-3 py-1.5 rounded text-white text-xs font-medium" x-bind:style="'background-color: ' + $wire.primary_color">Primario</div>
+                                        <div class="px-3 py-1.5 rounded text-white text-xs font-medium" x-bind:style="'background-color: ' + $wire.secondary_color">Secundario</div>
+                                        <div class="px-3 py-1.5 rounded text-white text-xs font-medium" x-bind:style="'background-color: ' + $wire.accent_color">Acento</div>
                                     </div>
                                 </div>
                             </div>
@@ -470,7 +471,7 @@ new class extends Component
                 @endif
 
                 {{-- ================================================ --}}
-                {{-- STEP 4: Social --}}
+                {{-- STEP 4: Social + Summary --}}
                 {{-- ================================================ --}}
                 @if ($step === 4)
                     <div class="p-8">
@@ -569,13 +570,13 @@ new class extends Component
                                 Siguiente
                             </flux:button>
                         @else
-                            <flux:button type="submit" variant="primary" :disabled="$creating">
+                            <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="createSite">
                                 <span wire:loading.remove wire:target="createSite" class="flex items-center gap-2">
-                                    <flux:icon.sparkles class="size-4" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" /></svg>
                                     Crear mi sitio web
                                 </span>
                                 <span wire:loading wire:target="createSite" class="flex items-center gap-2">
-                                    <flux:icon.arrow-path class="size-4 animate-spin" />
+                                    <svg class="size-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                                     Creando...
                                 </span>
                             </flux:button>
@@ -589,7 +590,7 @@ new class extends Component
         {{-- AI Hint --}}
         <div class="mt-8 text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-950/30 border border-primary-200 dark:border-primary-800">
-                <flux:icon.sparkles class="size-4 text-primary-500" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" /></svg>
                 <p class="text-sm text-primary-700 dark:text-primary-300">
                     Después de crear tu sitio, podrás usar la <strong>IA</strong> para generar tu landing page automáticamente.
                 </p>
@@ -597,4 +598,3 @@ new class extends Component
         </div>
 
     </div>
-</x-layouts::app>

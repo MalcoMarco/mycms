@@ -40,7 +40,7 @@ class WebSetting extends Model
         'logo',
         'logo_dark',
         'google_analytics_id',
-        'global_cdn_urls',
+        'global_cdn_urls', // Store as JSON array of CDN URLs example:{scripts:[], styles:[]}
         'custom_head_scripts',
         'custom_body_scripts',
     ];

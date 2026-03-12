@@ -106,9 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     smartIndent: true,
                 },
             },
-            canvas: {
-                //styles: ["data:text/css;charset=utf-8," + encodeURIComponent(window.canvas_style)],
-            },
+            canvas: {},
+
         });
 
         // Exponer el editor para depuración
@@ -355,6 +354,15 @@ function loadSavedCdns(editor, iframeDoc) {
     merged.styles.forEach((url) => {
         injectToDoc(iframeDoc, 'style', url);
     });
+
+    // Inyectar estilos globales del sitio (colores, utilidades) AL FINAL
+    // para que tengan prioridad sobre cualquier CDN cargado antes.
+    if (window.webSettings?.canvas_styles) {
+        const style = iframeDoc.createElement('style');
+        style.id = 'gjs-global-site-styles';
+        style.textContent = window.webSettings.canvas_styles;
+        iframeDoc.head.appendChild(style);
+    }
 }
 
 // Inyecta directamente en un document (sin depender de canvas.getFrameEl)

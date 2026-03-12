@@ -23,6 +23,30 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
+    --color-primary-50: oklch(0.97 0.02 250);
+    --color-primary-100: oklch(0.93 0.04 250);
+    --color-primary-200: oklch(0.87 0.07 250);
+    --color-primary-300: oklch(0.78 0.11 250);
+    --color-primary-400: oklch(0.68 0.15 250);
+    --color-primary-500: oklch(0.58 0.19 250);
+    --color-primary-600: oklch(0.50 0.20 250);
+    --color-primary-700: oklch(0.43 0.18 250);
+    --color-primary-800: oklch(0.37 0.15 250);
+    --color-primary-900: oklch(0.32 0.12 250);
+    --color-primary-950: oklch(0.25 0.09 250);
+
+    --color-secondary-50: oklch(0.97 0.02 165);
+    --color-secondary-100: oklch(0.93 0.04 165);
+    --color-secondary-200: oklch(0.87 0.07 165);
+    --color-secondary-300: oklch(0.78 0.11 165);
+    --color-secondary-400: oklch(0.68 0.15 165);
+    --color-secondary-500: oklch(0.58 0.14 165);
+    --color-secondary-600: oklch(0.50 0.13 165);
+    --color-secondary-700: oklch(0.43 0.11 165);
+    --color-secondary-800: oklch(0.37 0.09 165);
+    --color-secondary-900: oklch(0.32 0.07 165);
+    --color-secondary-950: oklch(0.25 0.06 165);
+
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);

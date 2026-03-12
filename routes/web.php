@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,10 +10,10 @@ Route::view('dashboard', 'pages.dashboard.index')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-    
 Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () {
 
-    Route::livewire('tenants', 'tenants')->name('tenants.index');
+    Route::livewire('tenants', 'pages::dashboard.tenants')->name('tenants.index');
+    Route::livewire('tenants/create', 'pages::dashboard.create-tenant')->name('tenants.create');
     Route::livewire('tenants/{tenant}', 'tenant-manager')->name('tenants.manager');
 });
 

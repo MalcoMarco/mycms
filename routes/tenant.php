@@ -42,6 +42,8 @@ Route::middleware([
         Route::post('pages/{slug}/update-content', [PostController::class, 'update'])->name('tenants.posts.update-content');
         Route::get('pages/{slug}/preview', [PostController::class, 'preview'])->name('tenants.posts.preview');
 
+        Route::get('generate-landing-data', [\App\Http\Controllers\GeminiController::class, 'generateLandingData'])->name('tenants.generate-landing-data');
+
     });
 
 });

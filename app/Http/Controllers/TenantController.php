@@ -12,7 +12,7 @@ class TenantController extends Controller
      */
     public function index()
     {
-        return view('pages.dashboard.tenant');
+        // return view('pages.dashboard.tenant');
     }
 
     /**
@@ -20,7 +20,7 @@ class TenantController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.dashboard.create-tenant');
     }
 
     /**
