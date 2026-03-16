@@ -75,7 +75,7 @@ class GeminiController extends Controller
         - Use Tailwind CSS v4 utility classes exclusively for styling.
         - For colors, use semantic classes: text-primary, bg-primary, border-primary, text-secondary, bg-secondary, border-secondary, text-accent, bg-accent, border-accent. These are defined via Tailwind's @theme — do NOT include color definitions.
         - The page must be fully responsive (mobile-first) with a clean, modern layout.
-        - Include these sections: hero with CTA, features/services, about, social proof/testimonials, and a footer with social links (only the ones provided above).
+        - Include these sections: hero with CTA, features/services, about, and a footer with social links (only the ones provided above).
         - Use placeholder image URLs from https://placehold.co (e.g. https://placehold.co/600x400).
         - All text content must match the website's language and industry inferred from its name and description.
         - Add smooth scroll behavior and subtle hover transitions.
@@ -87,12 +87,12 @@ class GeminiController extends Controller
             "meta_description": "SEO meta description summarizing the page (150-160 chars)",
             "meta_keywords": "comma-separated relevant SEO keywords (8-12 keywords)",
             "content_head": "Extra <head> content: meta tags, preconnect links, etc. Do NOT include <title> or charset.",
-            "content_body": "content of <body>. Must be a single self-contained landing page using only Tailwind CSS v4 classes. Include all sections listed above.",
-            "content_css": "Any custom CSS beyond Tailwind utilities (minimal, only if strictly needed). Don't comment the code. Leave empty string if not needed. dont include <style> tags, just the CSS code.",
-            "content_js": "Vanilla JavaScript for interactivity: mobile menu toggle, smooth scroll, scroll animations. No frameworks. Include the <script> tags, just the JS code. don't comment the code.",
+            "content_body": "content of <body>, start with <body> tag. Must be a single self-contained landing page using only Tailwind CSS v4 classes. Include all sections listed above.",
+            "content_css": "Any custom CSS beyond Tailwind utilities (minimal, only if strictly needed). Don't comment the code. Leave empty string if not needed. don't include <style> tags, just the CSS code.",
+            "content_js": "Vanilla JavaScript for interactivity. You MAY include comments. IMPORTANT: The code must be properly formatted with real newline characters escaped as '\\n'. Do NOT return the code in a single compressed line. Ensure that single-line comments (//) are always followed by an escaped newline (\\n) so they do not comment out the rest of the code. Do NOT include <script> tags.",
             "cdns": {
-                "styles": ["CDN URLs for external stylesheets if needed, e.g. Google Fonts"],
-                "scripts": ["CDN URLs for external scripts if needed. Avoid unnecessary libraries. add cdn of tailwind 4 here"]
+                "styles": ["CDN URLs for external stylesheets or fonts if needed, e.g. Google Fonts"],
+                "scripts": ["CDN URLs for external scripts if needed. Avoid unnecessary libraries. add cdn of tailwind 4 here (https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4)"]
             }
         }
         PROMPT;

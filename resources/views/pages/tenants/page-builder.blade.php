@@ -26,7 +26,9 @@
             slug: "{{ $post->slug }}",
             status: "{{ $post->status }}",
             type_id: "{{ $post->type_id }}",
-            cdns: {!! json_encode($post->cdns) !!}
+            cdns: {!! json_encode($post->cdns) !!},
+            content_css: @json($post->content_css ?? ''),
+            content_js: @json($post->content_js ?? '')
         };
         window.webSettings = {
             google_analytics_id: "{{ $webSetting->google_analytics_id ?? '' }}",

@@ -34,7 +34,7 @@
     </style>
 </head>
 
-<body>
+
     {{-- BODY DEL POST --}}
     {!! $post->content_body !!}
 
@@ -53,9 +53,20 @@
 
     {!! $webSetting->custom_body_scripts !!}
 
-    <script>
-        {!! $post->content_js !!}
-    </script>
-</body>
+    @php
+        $contentJs = trim($post->content_js ?? '');
+    @endphp
+
+    @if ($contentJs !== '')
+        @if (str_contains($contentJs, '<script'))
+            {!! $contentJs !!}
+        @else
+            <script>
+                {!! $contentJs !!}
+            </script>
+        @endif
+    @endif
+
+
 
 </html>

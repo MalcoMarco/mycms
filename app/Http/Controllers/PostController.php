@@ -14,6 +14,7 @@ class PostController extends Controller
     {
         $post = Post::where('slug', $slug)->firstOrFail();
         $webSetting = $post->tenant->webSettings;
+
         return view('pages.tenants.page-builder', compact('post', 'webSetting'));
     }
 
@@ -24,16 +25,14 @@ class PostController extends Controller
     {
         $post = Post::where('slug', $slug)->firstOrFail();
         $webSetting = $post->tenant->webSettings;
+
         return view('pages.tenants.page-preview', compact('post', 'webSetting'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
@@ -59,8 +58,10 @@ class PostController extends Controller
         $post = Post::where('slug', $slug)->firstOrFail();
         $post->content_body = $request->input('content_body');
         $post->content_css = $request->input('content_css');
+        $post->content_js = $request->input('content_js');
         $post->cdns = $request->input('cdns');
         $post->save();
+
         return response()->json(['message' => 'Content updated successfully']);
     }
 

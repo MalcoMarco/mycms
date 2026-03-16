@@ -7,10 +7,15 @@ import "grapesjs-component-code-editor/dist/grapesjs-component-code-editor.min.c
 
 // Variable global para el editor
 let grapesEditor;
+let customJsCode = normalizeJsContent(window.post?.content_js || "");
+
 const API = {
     PAGE_EDIT_CONTENT: (id) => `/dashboard/pages/${id}/update-content`,
     PAGES: "/pages",
 };
+
+const CUSTOM_CANVAS_SCRIPT_ID = "gjs-custom-page-script";
+
 document.addEventListener("DOMContentLoaded", () => {
     const editorContainer = document.getElementById("gjs");
     if (!editorContainer) {
@@ -46,8 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         smartIndent: true,
                         indentWithTabs: true
                     },
-                    editJs: false, // Deshabilitar JS si no lo necesitas
-                    editCss: false, // Deshabilitar CSS si no lo necesitas
+                    editJs: false,
+                    editCss: true,
                     clearData: false
                 }
             },
@@ -113,18 +118,23 @@ document.addEventListener("DOMContentLoaded", () => {
         // Exponer el editor para depuración
         window.grapesEditor = grapesEditor;
 
+        if (window.post?.content_css) {
+            grapesEditor.setStyle(window.post.content_css);
+        }
+
         // Cargar CDNs cuando el iframe del canvas esté listo
         grapesEditor.on('canvas:frame:load', ({ window: frameWindow }) => {
             loadSavedCdns(grapesEditor, frameWindow.document);
+            applyCustomCodeToCanvas(frameWindow.document);
         });
 
         // Agregar bloques personalizados DESPUÉS de verificar los básicos
-        //addBlocksPersonalizados();
         // Botón para guardar el contenido
         addButtonSave();
         //addButtonReturnPage();
         // Botones para editar código
         addCodeEditorButtons();
+        addCustomCodeEditorButton();
         // Botón para gestionar CDNs
         addCdnManagerButton();
     
@@ -154,6 +164,7 @@ function addButtonSave() {
             }
             let html = editor.getHtml();
             const css = editor.getCss();
+            const js = customJsCode;
             let cdns = getSavedCdns();
 
             // Excluir CDNs globales para no duplicarlos en el post
@@ -168,6 +179,7 @@ function addButtonSave() {
 
             console.log("HTML:", html);
             console.log("CSS:", css);
+            console.log("JS:", js);
             console.log("CDNs:", cdns);
             // si es un componente quitar el <body> y </body>
             if (post.type_id == 4) {
@@ -184,6 +196,7 @@ function addButtonSave() {
                 body: JSON.stringify({
                     content_body: html,
                     content_css: css,
+                    content_js: js,
                     cdns: cdns,
                 }),
             })
@@ -250,57 +263,127 @@ function addCodeEditorButtons() {
             togglable: false, //do not close when button is clicked again
             id: "open-code",
         },
+        {
+            attributes: {
+                title: "Editar CSS y JS",
+            },
+            className: "fa fa-code",
+            command: "open-custom-code-editor",
+            togglable: false,
+            id: "open-custom-code-editor",
+        },
     ]);
 }
 
-function addBlocksPersonalizados() {
-    setTimeout(() => {
-        grapesEditor.BlockManager.add("my-block-id", {
-            label: "Texto Simple",
-            content: '<div class="my-block">Texto editable</div>',
-            category: "Personalizado",
-            attributes: { class: "gjs-block-section" },
-        });
-
-        grapesEditor.BlockManager.add("heading-block", {
-            label: "Título Personalizado",
-            content: "<h1>Mi Título</h1>",
-            category: "Personalizado",
-            attributes: { class: "gjs-block-section" },
-        });
-
-        grapesEditor.BlockManager.add("2-column-block", {
-            label: "2 Columnas Bootstrap",
-            content: `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p>Columna 1</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p>Columna 2</p>
-                        </div>
-                    </div>
-                `,
-            category: "Personalizado",
-            attributes: { class: "gjs-block-section" },
-        });
-
-        // Verificar todos los bloques después de agregar personalizados
-        console.log(
-            "Total de bloques después de agregar personalizados:",
-            grapesEditor.BlockManager.getAll().length
-        );
-
-        // Agrupar por categorías
-        const categories = {};
-        grapesEditor.BlockManager.getAll().forEach((block) => {
-            const category = block.get("category") || "Sin categoría";
-            if (!categories[category]) categories[category] = [];
-            categories[category].push(block.get("label"));
-        });
-        console.log("Bloques por categoría:", categories);
-    }, 200);
+function addCustomCodeEditorButton() {
+    grapesEditor.Commands.add("open-custom-code-editor", {
+        run: (editor) => {
+            const modal = editor.Modal;
+            modal.setTitle("Editar CSS y JS");
+            modal.setContent(buildCustomCodeModalContent(editor));
+            modal.open();
+        },
+    });
 }
+
+function normalizeJsContent(code) {
+    if (!code) {
+        return "";
+    }
+
+    const scriptMatches = [...code.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)];
+
+    if (scriptMatches.length > 0) {
+        return scriptMatches
+            .map((match) => match[1].trim())
+            .filter(Boolean)
+            .join("\n\n");
+    }
+
+    return code.trim();
+}
+
+function getCanvasDocument() {
+    const frame = grapesEditor?.Canvas?.getFrameEl();
+    return frame?.contentDocument || null;
+}
+
+function applyCustomCodeToCanvas(doc) {
+    if (!doc) {
+        return;
+    }
+
+    const existingScript = doc.getElementById(CUSTOM_CANVAS_SCRIPT_ID);
+    if (existingScript) {
+        existingScript.remove();
+    }
+
+    if (customJsCode.trim()) {
+        const script = doc.createElement("script");
+        script.id = CUSTOM_CANVAS_SCRIPT_ID;
+        script.textContent = customJsCode;
+        doc.body.appendChild(script);
+    }
+}
+
+function buildCustomCodeModalContent(editor) {
+    const container = document.createElement("div");
+    container.style.cssText = "padding: 16px; color: #ddd; font-family: sans-serif; max-height: 75vh; overflow-y: auto;";
+
+    container.innerHTML = `
+        <style>
+            .custom-code-section { margin-bottom: 18px; }
+            .custom-code-title { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #fff; }
+            .custom-code-help { margin: 0 0 8px; font-size: 12px; color: #9ca3af; }
+            .custom-code-editor { width: 100%; min-height: 220px; padding: 12px; border: 1px solid #555; border-radius: 6px; background: #1f2937; color: #f9fafb; font: 13px/1.5 monospace; resize: vertical; box-sizing: border-box; }
+            .custom-code-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; }
+            .custom-code-button { padding: 10px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+            .custom-code-button-secondary { background: #374151; color: #fff; }
+            .custom-code-button-primary { background: #2563eb; color: #fff; }
+        </style>
+
+        <div class="custom-code-section">
+            <label class="custom-code-title" for="custom-css-editor">CSS global</label>
+            <p class="custom-code-help">Este CSS se aplica al canvas y se guarda junto con la página.</p>
+            <textarea id="custom-css-editor" class="custom-code-editor" spellcheck="false"></textarea>
+        </div>
+
+        <div class="custom-code-section">
+            <label class="custom-code-title" for="custom-js-editor">JavaScript global</label>
+            <p class="custom-code-help">Escribe solo JavaScript. Si pegas etiquetas &lt;script&gt;, se limpiarán al guardar.</p>
+            <textarea id="custom-js-editor" class="custom-code-editor" spellcheck="false"></textarea>
+        </div>
+
+        <div class="custom-code-actions">
+            <button type="button" class="custom-code-button custom-code-button-secondary" id="custom-code-cancel">Cerrar</button>
+            <button type="button" class="custom-code-button custom-code-button-primary" id="custom-code-apply">Aplicar</button>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const cssEditor = container.querySelector("#custom-css-editor");
+        const jsEditor = container.querySelector("#custom-js-editor");
+        const applyButton = container.querySelector("#custom-code-apply");
+        const cancelButton = container.querySelector("#custom-code-cancel");
+
+        cssEditor.value = editor.getCss();
+        jsEditor.value = customJsCode;
+
+        applyButton.addEventListener("click", () => {
+            editor.setStyle(cssEditor.value);
+            customJsCode = normalizeJsContent(jsEditor.value);
+            applyCustomCodeToCanvas(getCanvasDocument());
+            editor.Modal.close();
+        });
+
+        cancelButton.addEventListener("click", () => {
+            editor.Modal.close();
+        });
+    }, 50);
+
+    return container;
+}
+
 
 // ============================================================
 // CDN Manager - Permite agregar/eliminar scripts y estilos CDN
