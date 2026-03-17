@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
-use App\Http\Controllers\PostController;
+
 /*
 |--------------------------------------------------------------------------
 | Tenant Routes
@@ -37,6 +38,8 @@ Route::middleware([
         Route::livewire('web-settings', 'pages::tenants.web-settings-edit')->name('tenants.web-settings.edit');
         Route::livewire('pages', 'pages::tenants.posts-pages')->name('tenants.posts.index');
         Route::livewire('components', 'pages::tenants.posts-component')->name('tenants.posts-component.index');
+        Route::livewire('media/upload', 'pages::dashboard.media.upload-files')->name('tenants.media.upload');
+        Route::livewire('media/files', 'pages::dashboard.media.uploaded-files')->name('tenants.media.files');
 
         Route::get('pages/{slug}/page-builder', [PostController::class, 'pagebuilder'])->name('tenants.posts.page-builder');
         Route::post('pages/{slug}/update-content', [PostController::class, 'update'])->name('tenants.posts.update-content');

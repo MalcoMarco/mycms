@@ -28,6 +28,14 @@
                         {{ __('Components') }}
                     </flux:sidebar.item>
 
+                    <flux:sidebar.item icon="arrow-up-tray" :href="route('tenants.media.upload')" :current="request()->routeIs('tenants.media.upload')" wire:navigate>
+                        {{ __('Upload Files') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="folder-open" :href="route('tenants.media.files')" :current="request()->routeIs('tenants.media.files')" wire:navigate>
+                        {{ __('Uploaded Files') }}
+                    </flux:sidebar.item>
+
                 </flux:sidebar.group>
             </flux:sidebar.nav>
             
