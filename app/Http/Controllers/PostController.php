@@ -19,6 +19,16 @@ class PostController extends Controller
     }
 
     /**
+     * Show the code mirror editor for a specific post.
+     */
+    public function codeEditor($slug)
+    {
+        $post = Post::where('slug', $slug)->firstOrFail();
+
+        return view('pages.tenants.page-builder-code-mirror', compact('post'));
+    }
+
+    /**
      * Show the preview for a specific post.
      */
     public function preview($slug)
@@ -51,25 +61,49 @@ class PostController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the body of content, CSS, and JS for a specific post.
+     * Este método recibe el contenido HTML completo generado por GrapesJS, que incluye el <body> con sus atributos, así como el CSS y JS separados. El método extrae el contenido del <body> y lo reemplaza en la base de datos, preservando cualquier atributo que el <body> original pueda tener. Además, actualiza los campos de CSS y JS del post.
      */
     public function update(Request $request, $slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
-        $post->content_body = $request->input('content_body');
-        $post->content_css = $request->input('content_css');
-        $post->content_js = $request->input('content_js');
-        $post->cdns = $request->input('cdns');
+
+        $incomingHtml = $request->input('content', '');
+
+        // Extraer solo el contenido del <body> del HTML recibido desde GrapesJS
+        if (preg_match('/(<body[^>]*>)(.*)<\/body>/s', $incomingHtml, $bodyMatch)) {
+            $newBodyTag = $bodyMatch[1]; // <body class="..."> con todos sus atributos
+            $newBodyContent = $bodyMatch[2];
+
+            // Reemplazar el body completo (tag + contenido) preservando atributos
+            if (preg_match('/<body[^>]*>.*<\/body>/s', $post->content)) {
+                $post->content = preg_replace('/<body[^>]*>.*<\/body>/s', $newBodyTag . $newBodyContent . '</body>', $post->content);
+            } else {
+                $post->content = $incomingHtml;
+            }
+        } else {
+            $post->content = $incomingHtml;
+        }
+
+        $post->css = $request->input('css');
+        $post->js = $request->input('js');
         $post->save();
 
         return response()->json(['message' => 'Content updated successfully']);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Actualizar el contenido del post utilizando un editor de código como CodeMirror, donde el usuario edita directamente el HTML completo, incluyendo el <body> con sus atributos. Este método reemplaza todo el contenido del post con el HTML recibido, sin intentar extraer o preservar atributos específicos del <body>.
      */
-    public function destroy(Post $post)
+    public function updateWithCodeMirror(Request $request, $slug)
     {
-        //
+        $post = Post::where('slug', $slug)->firstOrFail();
+
+        $incomingHtml = $request->input('content', '');
+
+        $post->content = $incomingHtml;
+        $post->save();
+
+        return response()->json(['message' => 'Content updated successfully']);
     }
 }

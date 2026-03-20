@@ -1,33 +1,32 @@
-import CodeMirror from 'codemirror'
-import 'codemirror/lib/codemirror.css'
-
-// Lenguaje JavaScript
-import 'codemirror/mode/javascript/javascript'
-
-// Tema (opcional, estilo VSCode oscuro)
-import 'codemirror/theme/material-darker.css'
+import { EditorView, basicSetup } from 'codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+import { oneDark } from '@codemirror/theme-one-dark'
 
 function initEditors() {
     document.querySelectorAll('.editor-js').forEach((textarea) => {
-        // Evitar inicializar dos veces el mismo textarea
         if (textarea.dataset.codemirrorInitialized) {
             return
         }
 
         textarea.dataset.codemirrorInitialized = 'true'
 
-        CodeMirror.fromTextArea(textarea, {
-            mode: 'javascript',
-            theme: 'material-darker',
-            lineNumbers: true,
-            tabSize: 2,
-            indentUnit: 2,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            extraKeys: {
-                "Ctrl-Space": "autocomplete"
-            }
+        const view = new EditorView({
+            doc: textarea.value,
+            extensions: [
+                basicSetup,
+                javascript(),
+                oneDark,
+                EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        textarea.value = update.state.doc.toString()
+                        textarea.dispatchEvent(new Event('input', { bubbles: true }))
+                    }
+                }),
+            ],
+            parent: textarea.parentElement,
         })
+
+        textarea.style.display = 'none'
     })
 }
 

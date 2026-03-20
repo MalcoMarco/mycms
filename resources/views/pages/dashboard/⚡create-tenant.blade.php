@@ -180,9 +180,8 @@ new class extends Component
             Post::create([
                 'tenant_id' => $tenant->id,
                 'slug' => 'home',
+                'title' => 'Home',
                 'type_id' => PostType::Page->value,
-                'title' => $this->site_name,
-                'excerpt' => $this->meta_description,
                 'status' => PostStatus::Draft->value,
             ]);
 

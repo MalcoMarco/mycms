@@ -72,11 +72,27 @@ class GeminiController extends Controller
         {$siteContext}
 
         === DESIGN REQUIREMENTS ===
-        - Use Tailwind CSS v4 utility classes exclusively for styling.
-        - For colors, use semantic classes: text-primary, bg-primary, border-primary, text-secondary, bg-secondary, border-secondary, text-accent, bg-accent, border-accent. These are defined via Tailwind's @theme — do NOT include color definitions.
+        - Use Tailwind CSS v4 utility classes exclusively for styling. 
+          this is the script actually 
+          <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+          <style type="text/tailwindcss">
+            @theme {
+                --color-primary: custom value or fallback;
+                --color-secondary: custom value or fallback;
+                --color-accent: custom value or fallback;
+            }
+         </style>
+        - For colors, use semantic classes: text-primary, bg-primary, border-primary, text-secondary, bg-secondary, border-secondary, text-accent, bg-accent, border-accent. These are defined via Tailwind's @theme.
+        - For social media icons, use Remix icons: 
+            the cdn is: <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet" />
+          - Facebook: <i class="ri-facebook-line"></i> (outline), <i class="ri-facebook-fill"></i> (filled)
+          - Instagram: <i class="ri-instagram-line"></i>, <i class="ri-instagram-fill"></i>
+          - Twitter/X: <i class="ri-twitter-line"></i>, <i class="ri-twitter-fill"></i>
+          - tiktok: <i class="ri-tiktok-line"></i>, <i class="ri-tiktok-fill"></i>
         - The page must be fully responsive (mobile-first) with a clean, modern layout.
         - Include these sections: hero with CTA, features/services, about, and a footer with social links (only the ones provided above).
         - Use placeholder image URLs from https://placehold.co (e.g. https://placehold.co/600x400).
+            for background images css, use the class for example: bg-[url('https://placehold.co/600x400')] and for img tags use src="https://placehold.co/600x400".
         - All text content must match the website's language and industry inferred from its name and description.
         - Add smooth scroll behavior and subtle hover transitions.
 
@@ -86,14 +102,8 @@ class GeminiController extends Controller
             "meta_title": "SEO-optimized page title (50-60 chars)",
             "meta_description": "SEO meta description summarizing the page (150-160 chars)",
             "meta_keywords": "comma-separated relevant SEO keywords (8-12 keywords)",
-            "content_head": "Extra <head> content: meta tags, preconnect links, etc. Do NOT include <title> or charset.",
-            "content_body": "content of <body>, start with <body> tag. Must be a single self-contained landing page using only Tailwind CSS v4 classes. Include all sections listed above.",
-            "content_css": "Any custom CSS beyond Tailwind utilities (minimal, only if strictly needed). Don't comment the code. Leave empty string if not needed. don't include <style> tags, just the CSS code.",
-            "content_js": "Vanilla JavaScript for interactivity. You MAY include comments. IMPORTANT: The code must be properly formatted with real newline characters escaped as '\\n'. Do NOT return the code in a single compressed line. Ensure that single-line comments (//) are always followed by an escaped newline (\\n) so they do not comment out the rest of the code. Do NOT include <script> tags.",
-            "cdns": {
-                "styles": ["CDN URLs for external stylesheets or fonts if needed, e.g. Google Fonts"],
-                "scripts": ["CDN URLs for external scripts if needed. Avoid unnecessary libraries. add cdn of tailwind 4 here (https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4)"]
-            }
+            "content": "content html. landing page using only Tailwind CSS v4 classes. Include all sections listed above.",
+            
         }
         PROMPT;
     }
@@ -117,11 +127,7 @@ class GeminiController extends Controller
             [
                 'type_id' => PostType::Page,
                 'title' => $data['meta_title'] ?? 'Landing Page',
-                'content_head' => $data['content_head'] ?? null,
-                'content_body' => $data['content_body'] ?? null,
-                'content_css' => $data['content_css'] ?? null,
-                'content_js' => $data['content_js'] ?? null,
-                'cdns' => $data['cdns'] ?? null,
+                'content' => $data['content'] ?? null,
                 'status' => PostStatus::Published,
             ]
         );

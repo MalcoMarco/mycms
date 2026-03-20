@@ -15,12 +15,16 @@ new class extends Component
 
     public string $tenantId = '';
 
+    public int $tenantNumber;
+
+    public int $maxFileSize = 10240; // 10MB en KB
+
     public string $disk = 's3';
 
     public function mount(): void
     {
         $this->tenantId = (string) tenant('id');
-
+        $this->tenantNumber = tenant('number');
         if ($this->tenantId === '') {
             abort(404);
         }
@@ -33,7 +37,7 @@ new class extends Component
     {
         return [
             'files' => ['required', 'array', 'min:1'],
-            'files.*' => ['required', 'file', 'max:10240', 'mimes:jpg,jpeg,png,webp,pdf'],
+            'files.*' => ['required', 'file', 'max:' . $this->maxFileSize, 'mimes:jpg,jpeg,png,webp,pdf'],
         ];
     }
 
@@ -45,7 +49,7 @@ new class extends Component
         return [
             'files.required' => 'Selecciona al menos un archivo.',
             'files.*.mimes' => 'Solo se permiten archivos de imagen (jpg, jpeg, png, webp) o PDF.',
-            'files.*.max' => 'Cada archivo no debe superar los 10MB.',
+            'files.*.max' => 'Cada archivo no debe superar los ' . ($this->maxFileSize / 1024) . 'MB.',
         ];
     }
 
@@ -54,7 +58,7 @@ new class extends Component
         $validated = $this->validate();
 
         foreach ($validated['files'] as $file) {
-            $path = $file->store("{$this->tenantId}/media", $this->disk);
+            $path = $file->store("{$this->tenantNumber}/media", $this->disk);
             $mimeType = (string) $file->getMimeType();
 
             MediaFile::create([
@@ -100,7 +104,7 @@ new class extends Component
 
                 <p class="text-base font-semibold text-zinc-800 dark:text-zinc-100">Arrastra y suelta tus archivos aqui</p>
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">o haz clic para seleccionarlos</p>
-                <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">Formatos permitidos: JPG, JPEG, PNG, WEBP y PDF. Maximo 10MB por archivo.</p>
+                <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">Formatos permitidos: JPG, JPEG, PNG, WEBP y PDF. Maximo {{ $maxFileSize / 1024 }}MB por archivo.</p>
             </label>
 
             <input

@@ -11,7 +11,8 @@ export default defineConfig({
                 'resources/css/app.css', 
                 'resources/js/app.js',
                 'resources/js/grapeJsModule.js',
-                'resources/js/codeMirrorModule.js'
+                'resources/js/codeMirrorModule.js',
+                'resources/js/codeMirrorPageBuilder.js',
             ],
             refresh: true,
         }),

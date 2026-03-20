@@ -23,13 +23,11 @@ class Post extends Model
         'slug',
         'type_id',
         'title',
-        'content_head',
-        'content_body',
-        'content_css',
-        'content_js',
-        'cdns', // Store as JSON array of CDN URLs example:{scripts:[], styles:[]}
-        'excerpt',
+        'content',
+        'css',
+        'js',
         'status',
+        'password',
     ];
 
     /**
@@ -42,7 +40,6 @@ class Post extends Model
         return [
             'type_id' => PostType::class,
             'status' => PostStatus::class,
-            'cdns' => 'array',
         ];
     }
 

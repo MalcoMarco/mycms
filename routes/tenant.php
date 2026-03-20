@@ -47,6 +47,9 @@ Route::middleware([
 
         Route::get('generate-landing-data', [\App\Http\Controllers\GeminiController::class, 'generateLandingData'])->name('tenants.generate-landing-data');
 
+        Route::get('pages/{slug}/code-editor', [PostController::class, 'codeEditor'])->name('tenants.posts.code-editor');
+        Route::post('pages/{slug}/update-code', [PostController::class, 'updateWithCodeMirror'])->name('tenants.posts.update-code');
+
     });
 
 });

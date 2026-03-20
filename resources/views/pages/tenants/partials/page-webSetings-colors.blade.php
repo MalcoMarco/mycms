@@ -1,15 +1,15 @@
 {{-- Estilos para el manejo de colores del sitio web --}}
 :root {
-    @if ($webSetting->primary_color)
-        --color-primary: {{ $webSetting->primary_color }};
+    @if ($colors['primary'] ?? null)
+        --color-primary: {{ $colors['primary'] }};
         --color-primary-hover: color-mix(in srgb, var(--color-primary), black 10%);
         --color-primary-soft: color-mix(in srgb, var(--color-primary), white 80%);
     @endif
-    @if ($webSetting->secondary_color)
-        --color-secondary: {{ $webSetting->secondary_color }};
+    @if ($colors['secondary'] ?? null)
+        --color-secondary: {{ $colors['secondary'] }};
     @endif
-    @if ($webSetting->accent_color)
-        --color-accent: {{ $webSetting->accent_color }};
+    @if ($colors['accent'] ?? null)
+        --color-accent: {{ $colors['accent'] }};
     @endif
 }
 
